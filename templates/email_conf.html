@@ -1,0 +1,12 @@
+{% autoescape off %}
+
+Text Summarization App
+
+Hello {{name}}
+
+Be a good boy and confirm your email address by clicking the link below
+
+
+Confirm: http://{{domain}}{% url 'activate' token=token uidb64=uid %}
+
+{% endautoescape %}

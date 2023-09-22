@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        #parameterForm {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 80%;
+            padding: 10px;
+            margin-left: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+
+    <!-- Add necessary CSS and JS imports here -->
+</head>
+<body>
+    <form id="parameterForm">
+        {% csrf_token %}
+        <!-- Your parameter selection inputs here -->
+        <label for="param1">Sentences No:</label>
+        <input type="text"  name="param1" id="param1" required >
+        
+        <label for="param2">Topics No:</label>
+        <input type="text"  name="param2" id="param2" >
+
+        <label for="param3">Threshold:</label>
+        <input type="text"  name="param3" id="param3" >
+
+        <button type="button" onclick="submitAndClosePopup()">Submit</button>
+    </form>
+    <script>
+
+        window.addEventListener("message", function(event) {
+        // Assuming the event.data is an object with parameters
+            const data = event.data;
+
+            if (data.action === 'disableInputs') {
+                // Disable the input fields
+                document.getElementById("param1").disabled = true;
+                document.getElementById("param2").disabled = true;
+                document.getElementById("param3").disabled = true;
+            }
+    });
+
+
+        function submitAndClosePopup() {
+            // Get the selected parameters
+            const param1 = document.getElementById("param1").value;
+            const param2 = document.getElementById("param2").value;
+            const param3 = document.getElementById("param3").value;
+
+            // Create an object to hold the parameters
+            const params = {
+                param1: param1,
+                param2: param2,
+                param3: param3
+            };
+
+            // Send the parameters back to the parent window (index.html)
+            window.opener.postMessage(params, "*");
+
+            // Close the pop-up window
+            window.close();
+        }
+    </script>
+</body>
+</html>

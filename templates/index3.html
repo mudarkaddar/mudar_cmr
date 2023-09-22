@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Title</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      max-width: 800px;
+      margin: 20px auto;
+    }
+    h1 {
+      color: #333;
+    }
+    #buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .button {
+      margin-bottom: 10px;
+    }
+    #text-area {
+      width: 80%;
+      height: 200px;
+      margin: 20px auto;
+      display: block;
+    }
+    #text-area2 {
+      width: 80%;
+      height: 200px;
+      margin: 20px auto;
+      display: block;
+    }
+    #result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Title</h1>
+    <select id="my-list">
+      <option value="https://www.skynewsarabia.com/">سكاي نيوز بالعربية</option>
+      <option value="https://alwatan.sy/">جريدة الوطن</option>
+      <option value="https://www.almayadeen.net/">الميادين</option>
+      <!-- Add more options as needed -->
+    </select>
+    <input type="number" id="article_no" value="1" name="article_no" min="0" max="10" step="1">
+    <textarea id="text-area"></textarea>
+    <textarea id="text-area2"></textarea>
+    <p id="message-value" style="display: none;">{{message}}</p>
+    <div id="buttons">
+      <button class="button" onclick="executeFunction('f1')">Button 1</button>
+      <button class="button" onclick="executeFunction('f2')">Button 2</button>
+      <button class="button" onclick="executeFunction('f3')">Button 3</button>
+      <button class="button" onclick="executeFunction('f4')">Button 4</button>
+      <button class="button" onclick="reset_textareas()">Button 5</button>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function reset_textareas() {
+      $("#text-area").val("");
+      $("#text-area2").val('');
+    }
+
+    function executeFunction(action) {
+      var textarea = document.getElementById("text-area").value;
+      var no = document.getElementById("article_no").value;
+      var article_url = document.getElementById("my-list").value;
+      var samir = '#text-area2'
+      if (action === 'f4') {
+        samir = '#text-area';
+      }
+      // Send a GET request to the URL with the specified action as a query parameter
+      $.ajax({
+        url: `{% url 'index' %}?action=${action}&no=${no}&textarea=${textarea}&article_url=${article_url}`,
+        type: 'GET',
+        success: function (response) {
+          // Remove newline characters from the response
+          response = response.replace(/\n/g, '');
+          // Use a regular expression to find all <p> tags
+          var regex = /<p[^>]*>(.*?)<\/p>/gi;
+          var matches = response.match(regex);
+          if (matches && matches.length !== 0) {
+            // Concatenate the text content of all matched <p> tags
+            var pTagText = '';
+            var i = 0;
+            while (i !== matches.length) {
+              // Use a temporary div to extract the text content
+              var tempDiv = document.createElement('div');
+              tempDiv.innerHTML = matches[i];
+              var paragraphText = tempDiv.textContent || tempDiv.innerText || '';
+              pTagText += paragraphText.trim() + '\n\n';
+              i++;
+            }
+            $(samir).val(pTagText);
+          } else {
+            // No <p> tags found in the response
+            console.log('No matching paragraphs found in the response.');
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

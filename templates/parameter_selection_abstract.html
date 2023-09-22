@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        #parameterForm {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 80%;
+            padding: 10px;
+            margin-left: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+
+    <!-- Add necessary CSS and JS imports here -->
+</head>
+<body>
+    <form id="parameterForm">
+        {% csrf_token %}
+        <!-- Your parameter selection inputs here -->
+        <label for="absprm1">colab_api_url:</label>
+        <input type="text"  name="absprm1" id="absprm1"  >
+        
+        <label for="absprm2">p_num_beams:</label>
+        <input type="text"  name="absprm2" id="absprm2" >
+
+        <label for="absprm3">p_max_length_input:</label>
+        <input type="text"  name="absprm3" id="absprm3" >
+
+        <label for="absprm4">p_max_length_output:</label>
+        <input type="text"  name="absprm4" id="absprm4" >
+
+        <label for="absprm5">p_repetition_penalty:</label>
+        <input type="text"  name="absprm5" id="absprm5" >
+
+        <label for="absprm6">p_temperature:</label>
+        <input type="text"  name="absprm6" id="absprm6" >
+
+        <button type="button" onclick="submitAndClosePopup()">Submit</button>
+    </form>
+    <script>
+
+
+
+        function submitAndClosePopup() {
+
+            // Get the selected parameters
+            const absprm1 = document.getElementById("absprm1").value;
+            const absprm2 = document.getElementById("absprm2").value;
+            const absprm3 = document.getElementById("absprm3").value;
+            const absprm4 = document.getElementById("absprm4").value;
+            const absprm5 = document.getElementById("absprm5").value;
+            const absprm6 = document.getElementById("absprm6").value;
+            // Create an object to hold the parameters
+            const params = {
+                absprm1: absprm1,
+                absprm2: absprm2,
+                absprm3: absprm3,
+                absprm4: absprm4,
+                absprm5: absprm5,
+                absprm6: absprm6
+            };
+
+            // Send the parameters back to the parent window (index.html)
+            window.opener.postMessage(params, "*");
+
+            // Close the pop-up window
+            window.close();
+        }
+    </script>
+</body>
+</html>

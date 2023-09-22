@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        #parameterForm {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        textarea {
+
+            width: 100%;
+            min-height: 100px;
+            max-height: 300px;
+            resize: vertical;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <!-- Your parameter selection inputs here -->
+        <label for="param1">summarized text:</label>
+        <textarea id="tr1"></textarea>
+        <br><br>
+        <label for="param2">reference summarized text:</label>
+        <textarea id="tr2"></textarea>
+
+        <br><br>
+        <button type="button" onclick="submitAndClosePopup()">eval</button>
+    </div>
+
+    <script>
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const textareaValue = urlParams.get('textareaValue');
+            document.getElementById("tr1").value = textareaValue;
+        }
+
+
+        function adjustTextareaWidth(textarea) {
+            textarea.style.width = "auto";
+            textarea.style.width = textarea.scrollWidth + "px";
+        }
+
+    </script>
+
+
+    <script>
+
+    </script>
+</body>
+</html>

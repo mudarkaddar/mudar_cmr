@@ -1,0 +1,221 @@
+<html>
+
+<head>
+    <title>Page Title</title>
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+        }
+        
+        #container {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        #content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            margin-left: 450px;
+        }
+        
+        #text-area,
+        #text-area2 {
+            width: 100%;
+            min-height: 200px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            resize: none;
+        }
+        
+        #main_text {
+            margin-left: 535px;
+            font-size: 20px;
+        }
+        
+        #summarized_text {
+            margin-left: 527px;
+            font-size: 20px;
+        }
+        
+        #buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: 10px;
+            margin-top: 134px;
+        }
+        
+        .button {
+            width: 100%;
+            margin: 31px 5px 31px 5px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .button:hover {
+            background-color: #45a049;
+        }
+        
+        #my-list {
+            margin-left: 500px;
+            margin-bottom: 10px;
+        }
+        
+        #article_no {
+            margin-bottom: 10px;
+            padding: 5px;
+            margin-left: 520px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="container">
+        <div id="content">
+            <h1>تلخيص مقالات إخبارية</h1>
+
+            <select id="my-list">
+    <option value="https://www.skynewsarabia.com/">سكاي نيوز بالعربية</option>
+    <option value="https://alwatan.sy/">جريدة الوطن</option>
+    <option value="https://www.almayadeen.net/">الميادين</option>
+    <option value="https://imn.iq/" >شبكة الإعلام العراقية</option>
+    <option value="https://www.bbc.com/arabic">BBC Arabic</option>
+    <!-- Add more options as needed -->
+</select>
+
+            <input type="number" id="article_no" value="1" name="article_no" min="0" max="10" step="1">
+
+            <label for="my-list" id="main_text"><b>:المقالة</b></label>
+            <textarea id="text-area"></textarea>
+            <label for="my-list" id="summarized_text"><b>:التلخيص</b></label>
+            <textarea id="text-area2"></textarea>
+            <p id="message-value" style="display: none;">
+                <ul>
+                    {% for item in message %}
+                        <li>{{ item|linebreaks  }}</li>
+                    {% endfor %}
+                </ul>
+            </p>
+
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script>
+
+            // function reset_textareas()
+
+            // {
+            //     $("#text-area").val("");
+            //     $("#text-area2").val('');
+            // }
+
+
+            function executeFunction(action) {
+
+                var textarea = document.getElementById("text-area").value;
+                
+                var no = document.getElementById("article_no").value;
+                var article_url = document.getElementById("my-list").value;
+       
+                var samir = '#text-area2'
+                if (action === 'f4') {
+                    // argument1 is provided
+                    samir = '#text-area';
+                }
+                // Send a GET request to the URL with the specified action as a query parameter
+                $.ajax({
+                    url: `{% url 'index' %}?action=${action}&no=${no}&textarea=${textarea}&article_url=${article_url}`,
+                    type: 'GET',
+                    success: function(response) {
+                        alert(response);
+                            // Remove newline characters from the response
+                       response = response.replace(/\n/g, '');
+                       
+                       //alert(textarea)
+                        // Use a regular expression to find all <p> tags
+                        var regex = /<p[^>]*>(.*?)<\/p>/gi;
+                        var matches = response.match(regex);
+
+                        if (matches && matches.length !== 0) {
+                            // Concatenate the text content of all matched <p> tags
+                            var pTagText = '';
+                            var i = 0;
+                            while (i !== matches.length) {
+                                // Use a temporary div to extract the text content
+                                var tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = matches[i];
+                                var paragraphText = tempDiv.textContent || tempDiv.innerText || '';
+                                pTagText += paragraphText.trim() + '\n\n';
+                                i++;
+                            }
+
+                            $(samir).val(pTagText);
+                        } else {
+                            // No <p> tags found in the response
+                            console.log('No matching paragraphs found in the response.');
+                        }
+                    }
+
+
+                });
+            }
+        </script>
+
+
+        <div id="buttons">
+            <!-- <button class="button" onclick="executeFunction('f1')">تلخيص استخراجي 1</button> -->
+            <button id = "openPopupBtn" class="button" >تلخيص استخراجي 1</button>
+            <button class="button" onclick="executeFunction('f2')">تلخيص استخراجي 2</button>
+            <button class="button" onclick="executeFunction('f3')">تلخيص تجريدي</button>
+            <button class="button" onclick="executeFunction('f4')">جلب مقالة</button>
+            <button class="button" onclick="openEvaluate('text-area2')">تقييم</button>
+        </div>
+    </div>
+
+    <script>
+
+
+        var url1 = "{% url "evaluate" %}";
+        
+        function openEvaluate(textareaId) {
+        var textareaValue = document.getElementById(textareaId).value;
+        var saria='2';
+        var url = url1+'?trone=' + encodeURIComponent(textareaValue)+"&trtwo=''&result=''";
+        // textareaValue = document.getElementById(trone).value; 
+        window.open(url, '_blank', 'width=600,height=400');
+        
+    }
+
+        
+    </script>
+        
+
+
+
+
+
+</body>
+
+</html>
